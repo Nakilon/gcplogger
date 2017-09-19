@@ -6,7 +6,7 @@
 
 
 module GCPLogger
-  puts "WARNING: GCPLogger was not meant to support multiple instantiating"
+  puts "NOTE: GCPLogger was not meant to support multiple instantiating"
   # TODO: move this warning print to the method that created logger
 
   require "logger"
@@ -41,7 +41,7 @@ module GCPLogger
     end
   end
 
-  @@Logging = Google::Cloud::Logging.new project: JSON.load(File.read ENV["GOOGLE_APPLICATION_CREDENTIALS"])["project_id"]
+  @@Logging = Google::Cloud::Logging.new project: JSON.load(File.read ENV["LOGGING_KEYFILE"])["project_id"]
   def self.logger name
     t = 0
     machine = if begin
