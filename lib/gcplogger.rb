@@ -43,15 +43,16 @@ module GCPLogger
 
   @@Logging = Google::Cloud::Logging.new project: JSON.load(File.read ENV["GOOGLE_APPLICATION_CREDENTIALS"])["project_id"]
   def self.logger name
+    machine = if Google::Cloud.env.compute_engine?
+      [ "gce_instance", {
+        "instance_id" => `curl http://metadata.google.internal/computeMetadata/v1/instance/id -H "Metadata-Flavor: Google"`,
+        "zone" => `curl http://metadata.google.internal/computeMetadata/v1/instance/zone -H "Metadata-Flavor: Google"`.split("/").last,
+      } ]
+    else
+      "global"
+    end
     (
-      Google::Cloud::Logging::Logger.new @@Logging, name, @@Logging.resource( *if Google::Cloud.env.compute_engine?
-        [ "gce_instance", {
-          "instance_id" => `curl http://metadata.google.internal/computeMetadata/v1/instance/id -H "Metadata-Flavor: Google"`,
-          "zone" => `curl http://metadata.google.internal/computeMetadata/v1/instance/zone -H "Metadata-Flavor: Google"`.split("/").last,
-        } ]
-      else
-        "global"
-      end ), {}   # if we omit labels would be Nil and so failing on #[]=
+      Google::Cloud::Logging::Logger.new @@Logging, name, @@Logging.resource(*machine), {}   # if we omit labels would be Nil and so failing on #[]=
     ).tap{ |logger| logger.level = :WARN }
   end
 
