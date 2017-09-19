@@ -43,7 +43,14 @@ module GCPLogger
 
   @@Logging = Google::Cloud::Logging.new project: JSON.load(File.read ENV["GOOGLE_APPLICATION_CREDENTIALS"])["project_id"]
   def self.logger name
-    machine = if Google::Cloud.env.compute_engine?
+    t = 0
+    machine = if begin
+      Google::Cloud.env.compute_engine?
+    rescue Errno::EHOSTDOWN
+      puts "failed to compose labels while instantiating a logger (Errno::EHOSTDOWN) -- retrying in #{t += 1} seconds"
+      sleep t
+      retry
+    end
       [ "gce_instance", {
         "instance_id" => `curl http://metadata.google.internal/computeMetadata/v1/instance/id -H "Metadata-Flavor: Google"`,
         "zone" => `curl http://metadata.google.internal/computeMetadata/v1/instance/zone -H "Metadata-Flavor: Google"`.split("/").last,
