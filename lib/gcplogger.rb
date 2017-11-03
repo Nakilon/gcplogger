@@ -29,7 +29,7 @@ module GCPLogger
         timeout = 0
         begin
           old.bind(self).(message, &block)
-        rescue Google::Cloud::DeadlineExceededError => e
+        rescue Google::Cloud::DeadlineExceededError, Google::Cloud::UnauthenticatedError => e
           ruby_logger.error e
           ruby_logger.info "sleep #{timeout += 1}"
           sleep timeout
