@@ -21,7 +21,7 @@ module GCPLogger
 
   Google::Cloud::Logging::Logger.class_eval do
     %i{ debug info warn error fatal unknown }.each do |level|
-      old = instance_method level
+      old = instance_method :level
       define_method level do |message, entry_labels = {}, &block|
         ruby_logger.send level, message
         logger_labels = @labels if @labels
