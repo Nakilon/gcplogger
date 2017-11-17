@@ -30,7 +30,7 @@ module GCPLogger
         begin
           old.bind(self).(message, &block)
         rescue Google::Cloud::DeadlineExceededError, Google::Cloud::UnauthenticatedError => e
-          ruby_logger.error e
+          ruby_logger.error "'#{e}' of #{message.inspect}"
           ruby_logger.info "sleep #{timeout += 1}"
           sleep timeout
           retry
@@ -41,6 +41,7 @@ module GCPLogger
     end
   end
 
+  fail "env var missing -- LOGGING_KEYFILE" unless ENV["LOGGING_KEYFILE"]
   @@Logging = Google::Cloud::Logging.new project: JSON.load(File.read ENV["LOGGING_KEYFILE"])["project_id"]
   def self.logger name
     t = 0
