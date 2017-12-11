@@ -7,7 +7,7 @@
 
 module GCPLogger
   puts "NOTE: GCPLogger was not meant to support multiple instantiating"
-  # TODO: move this warning print to the method that created logger
+  # TODO: move this warning print to the method that creates logger
 
   require "logger"
 
@@ -29,8 +29,8 @@ module GCPLogger
         timeout = 0
         begin
           old.bind(self).(message, &block)
-        rescue Google::Cloud::DeadlineExceededError, Google::Cloud::UnauthenticatedError => e
-          ruby_logger.error "'#{e}' of #{message.inspect}"
+        rescue Google::Cloud::DeadlineExceededError, Google::Cloud::UnauthenticatedError, Google::Cloud::UnavailableError => e
+          ruby_logger.error "'#{e}' of #{message.inspect} #{@labels.inspect}"
           ruby_logger.info "sleep #{timeout += 1}"
           sleep timeout
           retry

@@ -3,7 +3,7 @@ Gem::Specification.new do |spec|
   spec.summary = "wrapper for Google Cloud Logging"
   spec.author = "Victor Maslov aka Nakilon"
   spec.email = "nakilon@gmail.com"
-  spec.version = "0.0.1.2"
+  spec.version = "0.0.1.3"
   spec.require_path = "lib"
   spec.add_runtime_dependency "google-cloud-logging"
 end
