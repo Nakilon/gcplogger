@@ -23,9 +23,9 @@ module GCPLogger
     %i{ debug info warn error fatal unknown }.each do |level|
       old = instance_method level
       define_method level do |message, entry_labels = {}, &block|
-        ruby_logger.send level, message
         logger_labels = @labels if @labels
         @labels = (@labels || {}).merge entry_labels
+        ruby_logger.send level, "#{"#{@labels} " unless @labels.empty?}#{message}"
         timeout = 1
         begin
           old.bind(self).(message, &block)
