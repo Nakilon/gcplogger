@@ -7,5 +7,5 @@ Gem::Specification.new do |spec|
   spec.require_path = "lib"
 
   spec.add_runtime_dependency "public_suffix", "~>2.0"
-  spec.add_runtime_dependency "google-cloud-logging", "~>1.2.0"
+  spec.add_runtime_dependency "google-cloud-logging", "~>1.4.0"
 end
