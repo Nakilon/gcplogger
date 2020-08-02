@@ -15,7 +15,7 @@ module GCPLogger
   ruby_logger.formatter = lambda do |severity, datetime, progname, msg|
     "#{severity.to_s[0]} #{datetime.strftime "%y%m%d %H%M%S"} : #{msg}\n"
   end
-  ruby_logger.level = Logger.const_get ENV["LOGLEVEL"] if ENV["LOGLEVEL"]
+  ruby_logger.level = Logger.const_get ENV["LOGLEVEL_#{name}"] if ENV["LOGLEVEL_#{name}"]
 
   require "google/cloud/logging"
 
@@ -62,7 +62,7 @@ module GCPLogger
     end
     (
       Google::Cloud::Logging::Logger.new @@Logging, name, @@Logging.resource(*machine), {}   # if we omit labels would be Nil and so failing on #[]=
-    ).tap{ |logger| logger.level = :WARN }
+    ).tap{ |logger| logger.level = :WARN }  # this is the sending threshold
   end
 
 end unless defined? GCPLogger # preventing multiple Google::Cloud::Logging::Logger.class_eval
